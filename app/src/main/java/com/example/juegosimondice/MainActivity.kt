@@ -1,80 +1,56 @@
 package com.example.juegosimondice
 
-import android.os.Bundle
-import android.widget.Button
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
-import kotlin.random.Random
+import android.os.Bundle
+import android.util.Log
+import android.widget.Button
+import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        var sec: MutableList<Int> = mutableListOf<Int>()
-        var user_sec: MutableList<Int> = mutableListOf<Int>()
-        var finished = false
-        val botonrojo: Button = findViewById(R.id.redButton)
-        val botonamarillo: Button = findViewById(R.id.yellowButton)
-        val botonazul: Button = findViewById(R.id.blueButton)
-        val botonverde: Button = findViewById(R.id.greenButton)
-        val botonstar: Button = findViewById(R.id.startButton)
-        val botonreset: Button = findViewById(R.id.resetButton)
 
+        val simonModel by viewModels<MyVienModel>()
+        val greenB:Button=findViewById(R.id.greenButton)
+        val redB:Button=findViewById(R.id.redButton)
+        val yellowB:Button=findViewById(R.id.yellowButton)
+        val blueB:Button=findViewById(R.id.blueButton)
+        val startButton: Button = findViewById(R.id.startButton)
+        val resetButton: Button = findViewById(R.id.resetButton)
+        val outputText: TextView = findViewById(R.id.cuadroTexto)
 
-        botonstar.setOnClickListener {
-            finished = false
-            reset(sec, user_sec)
-            addToSecu(sec)
+        simonModel.systemMoves.observe(this,
+                Observer{ newSystemMove -> outputText.text=newSystemMove.toString()
+                    Log.d("FuncionSystem",newSystemMove.size.toString())
+                })
+
+        simonModel.playerMoves.observe(this, Observer {
+            newPlayerMove -> outputText.text=newPlayerMove.toString()
+        })
+
+        greenB.setOnClickListener {
+            simonModel.addPlayerMove(simonModel.playerMoves,1) }
+        redB.setOnClickListener {
+            simonModel.addPlayerMove(simonModel.playerMoves,2) }
+        yellowB.setOnClickListener {
+            simonModel.addPlayerMove(simonModel.playerMoves,3) }
+        blueB.setOnClickListener {
+            simonModel.addPlayerMove(simonModel.playerMoves,4) }
+        startButton.setOnClickListener {
+            simonModel.systemPlays()
+        }
+        resetButton.setOnClickListener {
+            simonModel.fullReset()
+            outputText.text="Reinicio"
 
         }
-
-        botonreset.setOnClickListener {
-            if (finished == false) {
-                if (checkSec(sec, user_sec)) {
-                    addToSecu(sec)
-                    user_sec.clear()
-
-                } else {
-                    finished = true
-
-                }
-            }
-        }
-        botonrojo.setOnClickListener {
-            addUserSec(user_sec, 1)
-        }
-        botonamarillo.setOnClickListener {
-            addUserSec(user_sec, 3)
-        }
-        botonazul.setOnClickListener {
-            addUserSec(user_sec, 4)
-        }
-        botonverde.setOnClickListener {
-            addUserSec(user_sec, 2)
-        }
-        //showSec(sec)
 
     }
 
-    fun addToSecu(sec: MutableList<Int>) {
-        val numb = Random.nextInt(4) + 1
-        sec.add(numb)
-    }
-
-    fun checkSec(sec: MutableList<Int>, secUsr: MutableList<Int>): Boolean {
-        return sec == secUsr
-    }
-
-    fun reset(sec: MutableList<Int>, secUsr: MutableList<Int>) {
-        sec.clear()
-        secUsr.clear()
-    }
-
-    fun addUserSec(secUsr: MutableList<Int>, color: Int) {
-        when (color) {
-            1 -> secUsr.add(1)
-            2 -> secUsr.add(2)
-            3 -> secUsr.add(3)
-            else -> secUsr.add(4)
-        }
-    }
 }
