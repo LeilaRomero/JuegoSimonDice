@@ -1,12 +1,12 @@
 package com.example.juegosimondice
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 
 class MainActivity : AppCompatActivity() {
@@ -25,23 +25,24 @@ class MainActivity : AppCompatActivity() {
         val resetButton: Button = findViewById(R.id.resetButton)
         val outputText: TextView = findViewById(R.id.cuadroTexto)
 
-        simonModel.systemMoves.observe(this,
+        simonModel.MovimientoSistema.observe(this,
                 Observer{ newSystemMove -> outputText.text=newSystemMove.toString()
                     Log.d("FuncionSystem",newSystemMove.size.toString())
                 })
 
-        simonModel.playerMoves.observe(this, Observer {
+        simonModel.MovimientoJugador.observe(this, Observer {
             newPlayerMove -> outputText.text=newPlayerMove.toString()
         })
+        simonModel.EstadoBoton.observe(this, Observer { estado ->startButton.isEnabled=estado })
 
         greenB.setOnClickListener {
-            simonModel.addPlayerMove(simonModel.playerMoves,1) }
+            simonModel.addPlayerMove(simonModel.MovimientoJugador,1) }
         redB.setOnClickListener {
-            simonModel.addPlayerMove(simonModel.playerMoves,2) }
+            simonModel.addPlayerMove(simonModel.MovimientoJugador,2) }
         yellowB.setOnClickListener {
-            simonModel.addPlayerMove(simonModel.playerMoves,3) }
+            simonModel.addPlayerMove(simonModel.MovimientoJugador,3) }
         blueB.setOnClickListener {
-            simonModel.addPlayerMove(simonModel.playerMoves,4) }
+            simonModel.addPlayerMove(simonModel.MovimientoJugador,4) }
         startButton.setOnClickListener {
             simonModel.systemPlays()
         }

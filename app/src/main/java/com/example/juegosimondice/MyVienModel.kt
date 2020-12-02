@@ -1,18 +1,20 @@
 package com.example.juegosimondice
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlin.random.Random
 
+
 class MyVienModel: ViewModel() {
 
-    val systemMoves = MutableLiveData<MutableList<Int>>()
-    val playerMoves = MutableLiveData<MutableList<Int>>()
+    val MovimientoSistema = MutableLiveData<MutableList<Int>>()
+    val MovimientoJugador = MutableLiveData<MutableList<Int>>()
+    val EstadoBoton = MutableLiveData<Boolean>()
 
     init {
-        systemMoves.value= mutableListOf()
-        playerMoves.value= mutableListOf()
+        MovimientoSistema.value= mutableListOf()
+        MovimientoJugador.value= mutableListOf()
+        EstadoBoton.value=true
     }
 
     fun <T> MutableLiveData <T>.notifiObserver(){
@@ -22,20 +24,21 @@ class MyVienModel: ViewModel() {
     fun systemPlays(){
         val pos : Int
         val randInt = Random.nextInt(4)+1
-        pos= systemMoves.value!!.size
-        this.systemMoves.value!!.add(pos,randInt)
-        //forces the variable update calling the observer
-        systemMoves.notifiObserver()
-        Log.d("FuncionSystem",systemMoves.value.toString())
+        pos= MovimientoSistema.value!!.size
+        MovimientoSistema.value!!.add(pos,randInt)
+        MovimientoSistema.notifiObserver()
+        EstadoBoton.value=false
+
     }
 
     fun fullReset(){
-        systemMoves.value!!.clear()
-        playerMoves.value!!.clear()
+        MovimientoSistema.value!!.clear()
+        MovimientoJugador.value!!.clear()
+        EstadoBoton.value=true
     }
 
-    fun playerReset(){
-        playerMoves.value!!.clear()
+    fun ResetJugador(){
+        MovimientoJugador.value!!.clear()
     }
 
     fun addPlayerMove(playerMoves: MutableLiveData<MutableList<Int>>, number: Int ){
